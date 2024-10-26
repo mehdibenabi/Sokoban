@@ -7,16 +7,12 @@ class SokobanPuzzle :
         self.boxes=boxes
         self.targets=targets
 
-    def isGoal(self,boxes,targets):
-         for target in targets :
-             for box in boxes :
-                if target==box :
-                     return True
-                return False
-    
+    def isGoal(self):
+        return all(box in self.targets for box in self.boxes)
+
     def successor_function(self):
         successors = []
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)] 
+        directions = { "UP": (-1, 0), "DOWN":(1, 0),"LEFT" : (0, -1),"RIGHT":(0, 1) } 
 
         for direction in directions:
             new_player_pos = (self.player_pos[0] + direction[0], self.player_pos[1] + direction[1])
@@ -50,7 +46,7 @@ class Node:
         self.parent = parent
         self.action = action
         self.g = g 
-        self.f = None
+        self.f = 0
 
     def get_path(self):
     
@@ -62,5 +58,7 @@ class Node:
         return path[::-1]  
 
     def get_solution(self):
-       
         return [node.action for node in self.get_path()[1:]]
+    
+    def set_f(self, heuristic):
+        self.f = self.g + heuristic(self.state)
